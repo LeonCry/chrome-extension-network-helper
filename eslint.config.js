@@ -42,4 +42,5 @@ export default antfu({
       },
     ],
   },
+  languageOptions: { globals: { chrome: 'readonly' } },
 });

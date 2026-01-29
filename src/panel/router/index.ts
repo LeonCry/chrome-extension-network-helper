@@ -5,8 +5,9 @@ const routes: Array<RouteRecordRaw> = [
   { path: '/', redirect: '/main' },
   {
     path: '/main',
-    component: () => import('@/layouts/defaultLayout.vue'),
-    children: [],
+    redirect: '/welcome',
+    component: () => import('@/panel/layouts/defaultLayout.vue'),
+    children: [{ path: '/welcome', component: () => import('@/panel/pages/welcome/index.vue') }],
   },
 ];
 

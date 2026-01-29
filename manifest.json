@@ -1,0 +1,7 @@
+{
+  "manifest_version": 3,
+  "name": "Network debugger Helper",
+  "version": "1.0",
+  "description": "一键复制请求详情给后端",
+  "devtools_page": "src/devtools/devtools.html"
+}
