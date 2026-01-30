@@ -47,7 +47,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       outDir: env.VITE_APP_OUTPUT,
       cssMinify: 'lightningcss',
       sourcemap: Boolean(env.VITE_APP_SOURCEMAP),
-      rollupOptions: { input: { panel: 'src/panel/index.html' } },
+      rollupOptions: { input: { panel: 'src/panel/index.html', popup: 'src/popup/index.html' } },
     },
     server: {
       host: 'localhost',

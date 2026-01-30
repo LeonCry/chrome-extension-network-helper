@@ -3,5 +3,10 @@
   "name": "Network debugger Helper",
   "version": "1.0",
   "description": "一键复制请求详情给后端",
-  "devtools_page": "src/devtools/devtools.html"
+  "devtools_page": "src/devtools/devtools.html",
+  "action": {
+    "default_popup": "src/popup/index.html",
+    "default_icon": "public/antenna.png",
+    "default_title": "点击打开调试助手"
+  }
 }
