@@ -2,35 +2,36 @@
 import {
   IconAccessibleFilled,
   IconAlarmSmoke,
-  IconAntenna,
+  IconArrowBigUpLinesFilled,
   IconBrandGithubFilled,
   IconBugFilled,
   IconDialpadFilled,
+  IconEyeCheck,
+  IconEyeOff,
+  IconEyeSpark,
+  IconFileOrientation,
   IconHistory,
+  IconHomeEco,
   IconLanguage,
   IconSettingsFilled,
+  IconStarFilled,
 } from '@tabler/icons-vue';
+
+const eyeShow = ref(false);
 </script>
 
 <template>
-  <main class="w-full h-full bg-zinc-700 text-red-100 flex flex-col p-4 gap-4 overflow-auto">
-    <header class="flex items-end w-full">
-      <h1 class="text-xl font-bold text-amber-100">
-        NETWORK DEBUGGER HELPER
+  <main class="w-full h-full bg-background text-foreground flex flex-col p-4 gap-4 overflow-auto">
+    <header class="flex items-center justify-center flex-col gap-2">
+      <img src="/logo.png" alt="logo" class="h-36">
+      <h1 class="font-bold text-2xl">
+        NETWORK DEBUGGER TOOL
       </h1>
-      <span class="flex-1" />
-      <IconAntenna
-        v-for="i in 6"
-        :key="i"
-        class="border mx-[2px] mb-[6px]"
-        :class="`text-red-${100 * i}`"
-        :size="12 + i * 2"
-      />
     </header>
-    <hr class="w-full h-px bg-zinc-500 border-0">
-    <section class="w-full rounded-md bg-zinc-600 p-3 text-sm leading-8 relative">
-      <h2 class="flex items-center gap-1 text-red-300">
-        <IconBugFilled class=" animate-bounce" :size="18" />
+    <hr class="w-full h-px bg-zinc-500">
+    <section class="w-full rounded-md bg-primary p-3 text-sm leading-8 relative">
+      <h2 class="flex items-center gap-1 text-red-300 font-bold">
+        <IconBrandGithubFilled class=" animate-bounce" :size="18" />
         <span>WELCOME</span>
       </h2>
       <p>
@@ -38,15 +39,26 @@ import {
         if you like it, please give it a star on GitHub,
         or report bugs.
       </p>
-      <ElButton
-        type="primary"
-        text
-        class="bg-zinc-500/50! hover:bg-zinc-500! w-full! mt-2 h-10!"
-      >
-        <IconBrandGithubFilled class="w-6 h-6 text-blue-200" />
-      </ElButton>
+      <div class="flex items-center">
+        <ElButton
+          type="primary"
+          text
+          class="bg-pink-500/80! hover:bg-pink-500! flex-1 mt-2 h-10!"
+        >
+          <IconStarFilled class="text-red-50 mr-2" :size="18" />
+          <span class="text-red-50">Give a star</span>
+        </ElButton>
+        <ElButton
+          type="primary"
+          text
+          class="bg-pink-500/80! hover:bg-pink-500! flex-1 mt-2 h-10!"
+        >
+          <IconBugFilled class="text-red-50 mr-2" :size="22" />
+          <span class="text-red-50">Report bugs</span>
+        </ElButton>
+      </div>
     </section>
-    <section class="w-full rounded-md bg-zinc-600 p-3 text-sm leading-8">
+    <section class="w-full rounded-md bg-primary p-3 text-sm leading-8">
       <h2 class="flex items-center gap-1 text-red-300">
         <IconAccessibleFilled class=" animate-bounce" :size="18" />
         <span>INTRODUCE</span>
@@ -60,17 +72,17 @@ import {
         <li>...</li>
       </ul>
     </section>
-    <section class="w-full rounded-md bg-zinc-600 p-3 text-sm leading-8">
+    <section class="w-full rounded-md bg-primary p-3 text-sm leading-8">
       <h2 class="flex items-center gap-1 text-red-300">
         <IconSettingsFilled class="animate-spin" :size="18" />
         <span>SETTING</span>
       </h2>
-      <div class="w-full bg-zinc-500 px-2 py-1 rounded-md flex items-center justify-between my-4">
+      <div class="w-full bg-primary_heavy px-2 py-1 rounded-md flex items-center justify-between my-4">
         <p class="flex items-center gap-2">
           <IconLanguage :size="20" />
           <span>language</span>
         </p>
-        <select class="w-[120px] bg-zinc-500 px-2 py-1 rounded-md text-right">
+        <select class="w-[120px] px-2 py-1 rounded-md text-right">
           <option value="en">
             English
           </option>
@@ -79,23 +91,23 @@ import {
           </option>
         </select>
       </div>
-      <div class="w-full bg-zinc-500 px-2 py-1 rounded-md flex items-center justify-between my-4">
+      <div class="w-full bg-primary_heavy px-2 py-1 rounded-md flex items-center justify-between my-4">
         <p class="flex items-center gap-2">
           <IconHistory :size="20" />
           <span>keep historical</span>
         </p>
         <span class="flex-1" />
-        <ElButton size="small" color="#ffe2e2">
+        <ElButton size="small" color="#FB61AF" class="text-white!">
           close
         </ElButton>
-        <ElButton size="small" color="#d4d4d8">
+        <ElButton size="small" color="#FFFFFF">
           3 days
         </ElButton>
-        <ElButton size="small" color="#d4d4d8">
+        <ElButton size="small" color="#FFFFFF">
           1000 counts
         </ElButton>
       </div>
-      <div class="w-full bg-zinc-500 px-2 py-1 rounded-md flex items-center justify-between my-4">
+      <div class="w-full bg-primary_heavy px-2 py-1 rounded-md flex items-center justify-between my-4">
         <p class="flex items-center gap-2">
           <IconAlarmSmoke :size="20" />
           <span>clear cache</span>
@@ -109,16 +121,49 @@ import {
           CLEAR
         </ElButton>
       </div>
+      <div class="w-full bg-primary_heavy px-2 py-1 rounded-md flex items-center justify-between my-4">
+        <p class="flex items-center gap-2">
+          <IconEyeSpark :size="20" />
+          <span>show eyes</span>
+        </p>
+        <ElSwitch
+          v-model="eyeShow"
+          width="50"
+          style="--el-switch-on-color: #FB61AF"
+          inline-prompt
+        >
+          <template #active>
+            <IconEyeCheck :size="20" />
+          </template>
+          <template #inactive>
+            <IconEyeOff :size="20" />
+          </template>
+        </ElSwitch>
+      </div>
     </section>
-    <section class="w-full rounded-md bg-zinc-600 p-3 text-sm leading-8">
+    <section class="w-full rounded-md bg-primary p-3 text-sm leading-8">
       <h2 class="flex items-center gap-1 text-red-300">
         <IconDialpadFilled class="animate-bounce" :size="18" />
         <span>EXPAND</span>
       </h2>
-      <ElButton color="#71717b">
-        Change log
-      </ElButton>
+      <div class="flex items-center justify-between mt-2">
+        <ElButton color="#FB61AF" class="text-white!">
+          <IconFileOrientation :size="18" />
+          <span class="ml-1">CHANGE LOG</span>
+        </ElButton>
+        <ElButton color="#FB61AF" class="text-white!">
+          <IconHomeEco :size="18" />
+          <span class="ml-1">HOME PAGE</span>
+        </ElButton>
+        <ElButton color="#FB61AF" class="text-white!">
+          <IconArrowBigUpLinesFilled :size="18" />
+          <span class="ml-1">VERSION 1.0</span>
+        </ElButton>
+      </div>
     </section>
+    <p class="text-center text-sm text-gray-300 mt-2">
+      copy right @ 2026-present Network debugger Helper
+    </p>
   </main>
 </template>
 
