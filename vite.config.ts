@@ -30,7 +30,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       }),
       Components({
         dts: true,
-        dirs: ['src/components', 'src/pages', 'src/layouts'],
+        dirs: ['src/panel/components', 'src/panel/pages'],
         resolvers: [ElementPlusResolver()],
       }),
       legacy({

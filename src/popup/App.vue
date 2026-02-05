@@ -21,10 +21,11 @@ const eyeShow = ref(false);
 </script>
 
 <template>
-  <main class="w-full h-full bg-background text-foreground flex flex-col p-4 gap-4 overflow-auto">
-    <header class="flex items-center justify-center flex-col gap-2">
-      <img src="/logo.png" alt="logo" class="h-36">
-      <h1 class="font-bold text-2xl">
+  <main class="w-full h-full bg-[#f2f0f4] text-[#3f3f47] flex flex-col p-4 gap-4 overflow-auto">
+    <header class="flex items-center justify-center flex-col gap-2 relative">
+      <img src="/logo.png" alt="logo" class="h-36 z-10">
+      <figure class="absolute w-50 h-50 bg-[#BDE6FA] rounded-full blur-lg -top-6" />
+      <h1 class="font-bold text-2xl z-10 header-clip">
         NETWORK DEBUGGER TOOL
       </h1>
     </header>
@@ -77,7 +78,7 @@ const eyeShow = ref(false);
         <IconSettingsFilled class="animate-spin" :size="18" />
         <span>SETTING</span>
       </h2>
-      <div class="w-full bg-primary_heavy px-2 py-1 rounded-md flex items-center justify-between my-4">
+      <div class="w-full bg-[#f2f0ff] px-2 py-1 rounded-md flex items-center justify-between my-4">
         <p class="flex items-center gap-2">
           <IconLanguage :size="20" />
           <span>language</span>
@@ -91,23 +92,23 @@ const eyeShow = ref(false);
           </option>
         </select>
       </div>
-      <div class="w-full bg-primary_heavy px-2 py-1 rounded-md flex items-center justify-between my-4">
+      <div class="w-full bg-[#f2f0ff] px-2 py-1 rounded-md flex items-center justify-between my-4">
         <p class="flex items-center gap-2">
           <IconHistory :size="20" />
           <span>keep historical</span>
         </p>
         <span class="flex-1" />
         <ElButton size="small" color="#FB61AF" class="text-white!">
-          close
+          OFF
         </ElButton>
         <ElButton size="small" color="#FFFFFF">
-          3 days
+          3 DAYS
         </ElButton>
         <ElButton size="small" color="#FFFFFF">
-          1000 counts
+          1000 COUNTS
         </ElButton>
       </div>
-      <div class="w-full bg-primary_heavy px-2 py-1 rounded-md flex items-center justify-between my-4">
+      <div class="w-full bg-[#f2f0ff] px-2 py-1 rounded-md flex items-center justify-between my-4">
         <p class="flex items-center gap-2">
           <IconAlarmSmoke :size="20" />
           <span>clear cache</span>
@@ -121,7 +122,7 @@ const eyeShow = ref(false);
           CLEAR
         </ElButton>
       </div>
-      <div class="w-full bg-primary_heavy px-2 py-1 rounded-md flex items-center justify-between my-4">
+      <div class="w-full bg-[#f2f0ff] px-2 py-1 rounded-md flex items-center justify-between my-4">
         <p class="flex items-center gap-2">
           <IconEyeSpark :size="20" />
           <span>show eyes</span>
@@ -167,4 +168,11 @@ const eyeShow = ref(false);
   </main>
 </template>
 
-<style scoped></style>
+<style scoped>
+.header-clip {
+  background: linear-gradient(-30deg, #62cff4, #ff71f3);
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+</style>
