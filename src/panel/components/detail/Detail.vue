@@ -2,10 +2,10 @@
 import { IconX } from '@tabler/icons-vue';
 
 const props = defineProps<{
-  row: Record<string, any> | null
+  row: string | null
   height: number
 }>();
-const emits = defineEmits<{ 'update:row': [Record<string, any> | null] }>();
+const emits = defineEmits<{ 'update:row': [string | null] }>();
 const row = useVModel(props, 'row', emits);
 function close() {
   row.value = null;
@@ -13,15 +13,11 @@ function close() {
 </script>
 
 <template>
-  <section class="detail-container" :style="{ height: `${height}px` }">
-    <RoundButton class="p-1! top-0 right-0 absolute" @click="close">
-      <IconX :size="14" />
+  <section class="detail-container transition-all duration-500 mt-2" :style="{ height: `${height}px` }">
+    <RoundButton class="p-1! -top-2 -right-2 absolute z-10" @click="close">
+      <IconX :size="18" />
     </RoundButton>
-    <div v-for="(value, key) in row || {}" :key="key" class="flex">
-      <div>
-        {{ key }} : {{ value }}
-      </div>
-    </div>
+    <QuasiTab />
   </section>
 </template>
 

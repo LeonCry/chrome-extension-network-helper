@@ -13,9 +13,11 @@ function handleShowBar() {
   showBar.value = !showBar.value;
 }
 // 查看详情
-const detailRow = ref<Record<string, any> | null>(null);
-function checkDetail(row: Record<string, any>) {
-  detailRow.value = row;
+const detailRow = ref<string | null>(null);
+function checkDetail(row: chrome.devtools.network.Request) {
+  row.getContent((content) => {
+    detailRow.value = content;
+  });
 }
 const toolBarRef = useTemplateRef('toolBarRef');
 const mainRef = useTemplateRef('mainRef');
@@ -57,10 +59,7 @@ const transformY = computed(() => {
       ref="headerRef"
       class="flex items-center gap-2 bg-background py-4 z-10 border-b border-gray-300 relative"
     >
-      <img src="/logo.png" alt="logo" class="w-8">
-      <p class="font-bold text-lg">
-        NETWORK DEBUGGER TOOL
-      </p>
+      <img src="/logo-Q-light.png" alt="logo" class="w-16 absolute">
       <span class="flex-1" />
       <RoundButton @click="handleShowBar">
         <IconArrowBigUpFilled
@@ -78,20 +77,17 @@ const transformY = computed(() => {
     </header>
     <ToolBar
       ref="toolBarRef"
-      class="transition-all duration-500 mt-2"
       :class="!showBar ? '' : 'delay-300'"
       :style="{ transform: transformY.barTrans }"
     />
     <Content
       :height="contentH"
       :check-detail="checkDetail"
-      class="transition-all duration-500 delay-200 mt-2"
-      :style="{ transform: transformY.contTrans }"
+      :cont-trans="transformY.contTrans"
     />
     <Detail
       v-model:row="detailRow"
       :height="detailH"
-      class="transition-all duration-500 mt-2"
       :class="!detailRow ? '' : 'delay-200'"
       :style="{ transform: transformY.detailTrans }"
     />

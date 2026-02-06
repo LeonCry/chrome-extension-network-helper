@@ -6,6 +6,7 @@
   --color-primary: var(--primary);
   --color-text_primary_blue: var(--text_primary_blue);
   --color-text_primary_red: var(--text_primary_red);
+  --color-gray_300: var(--gray_300);
 }
 
 :root {
