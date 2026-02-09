@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { IconFileSettingsFilled } from '@tabler/icons-vue';
 import { useApp } from '@/panel/stores/app';
+import { disableDisableCache, enableDisableCache } from '@/panel/utils/cache-control';
 
 const { isKeepLog, isStopCache, throttlingType, typeFilters, statusFilters } = storeToRefs(useApp());
 const isThrottling = ref(!!throttlingType.value);
@@ -55,13 +56,29 @@ function handleStatusChange(status: string) {
 function handleTypeChange(type: string) {
   filterChange(typeFilters, type);
 }
+function keepLogChange(value: boolean) {
+  isKeepLog.value = value;
+}
+function stopCacheChange(value: boolean) {
+  value ? enableDisableCache() : disableDisableCache();
+}
 </script>
 
 <template>
   <section class="py-2 flex flex-col gap-4 transition-all duration-500 mt-2">
     <div class="flex flex-wrap gap-2 gap-y-4">
-      <QuasiSwitch key="keepLog" v-model:value="isKeepLog" text="KEEP LOG" />
-      <QuasiSwitch key="stopCache" v-model:value="isStopCache" text="STOP CACHE" />
+      <QuasiSwitch
+        key="keepLog"
+        v-model:value="isKeepLog"
+        text="KEEP LOG"
+        @change="keepLogChange"
+      />
+      <QuasiSwitch
+        key="stopCache"
+        v-model:value="isStopCache"
+        text="STOP CACHE"
+        @change="stopCacheChange"
+      />
       <ElPopover placement="top" :width="400" :visible="showThrottlingPopover">
         <div class="flex gap-2 p-2!">
           <QuasiButton v-for="t in throttlingList" :key="t.value" @click="handleThrottlingChange(t.value)">

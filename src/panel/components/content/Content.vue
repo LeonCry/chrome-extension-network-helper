@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { IconTableFilled } from '@tabler/icons-vue';
+import { useApp } from '@/panel/stores/app';
 
 defineProps<{ height: number, checkDetail: (row: chrome.devtools.network.Request) => void, contTrans: string }>();
-
+const appStore = useApp();
 const columns = [
   { field: 'response.status', label: 'STATUS', minWidth: '12%' },
   { field: 'request.method', label: 'TYPE', minWidth: '10%' },
@@ -10,12 +11,20 @@ const columns = [
   { field: 'response.time', label: 'TIME', minWidth: '10%' },
 ];
 const tableData = ref<chrome.devtools.network.Request[]>([]);
-function handleRequestFinished(request: chrome.devtools.network.Request) {
+function onRequestFinished(request: chrome.devtools.network.Request) {
   tableData.value.push(request);
+  // console.log(request);
 }
-chrome.devtools.network.onRequestFinished.addListener(handleRequestFinished);
+chrome.devtools.network.onRequestFinished.addListener(onRequestFinished);
+// 页面刷新
+function onNavigated() {
+  if (appStore.isKeepLog) return;
+  tableData.value = [];
+}
+chrome.devtools.network.onNavigated.addListener(onNavigated);
 onBeforeUnmount(() => {
-  chrome.devtools.network.onRequestFinished.removeListener(handleRequestFinished);
+  chrome.devtools.network.onRequestFinished.removeListener(onRequestFinished);
+  chrome.devtools.network.onNavigated.removeListener(onNavigated);
 });
 // 右键菜单
 const showContextMenu = ref(false);

@@ -3,7 +3,8 @@ const props = defineProps<{
   value: boolean
   text: string
 }>();
-const emits = defineEmits<{ 'update:value': [boolean] }>();
+const emits = defineEmits<{ 'update:value': [boolean], 'change': [boolean] }>();
+interface InputEvent extends Event { target: HTMLInputElement }
 const value = useVModel(props, 'value', emits);
 const uid = `quasi-switch-${Math.random().toString(36).slice(2)}`;
 </script>
@@ -18,6 +19,7 @@ const uid = `quasi-switch-${Math.random().toString(36).slice(2)}`;
         :id="uid"
         v-model="value"
         type="checkbox"
+        @change="(e) => emits('change', (e as InputEvent).target.checked ?? false)"
       >
       <label :for="uid" />
     </div>

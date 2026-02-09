@@ -8,5 +8,12 @@
     "default_popup": "src/popup/index.html",
     "default_icon": "public/logo.png",
     "default_title": "点击打开调试助手"
-  }
+  },
+  "permissions": [
+    "declarativeNetRequest",
+    "declarativeNetRequestWithHostAccess"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ]
 }
