@@ -41,9 +41,9 @@
 /* element custom popover */
 .el-popover {
   background: var(--btn_bg) !important;
-  border: 1px solid var(--foreground) !important;
+  border: 2px solid var(--btn_activated) !important;
 }
 .el-popover .el-popper__arrow::before {
   background: var(--btn_bg) !important;
-  border: 1px solid var(--foreground) !important;
+  border: 2px solid var(--btn_activated) !important;
 }

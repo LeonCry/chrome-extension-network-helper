@@ -8,7 +8,7 @@ const columns = [
   { field: 'response.status', label: 'STATUS', minWidth: '12%' },
   { field: 'request.method', label: 'TYPE', minWidth: '10%' },
   { field: 'response.content.size', label: 'SIZE', minWidth: '10%' },
-  { field: 'response.time', label: 'TIME', minWidth: '10%' },
+  { field: 'time', label: 'TIME', minWidth: '10%' },
 ];
 const tableData = ref<chrome.devtools.network.Request[]>([]);
 function onRequestFinished(request: chrome.devtools.network.Request) {
@@ -64,7 +64,7 @@ function closeContextMenu() {
       >
         <template #default="{ row }">
           <div
-            class="cursor-pointer text-text_primary_blue! hover:text-text_primary_red! py-[2px]"
+            class="cursor-pointer text-text_primary_blue! hover:text-text_primary_red! py-[2px] truncate"
             @contextmenu="(e) => handleContextMenu(e, row)"
             @click="checkDetail(row)"
           >

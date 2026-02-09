@@ -11,7 +11,8 @@
   },
   "permissions": [
     "declarativeNetRequest",
-    "declarativeNetRequestWithHostAccess"
+    "declarativeNetRequestWithHostAccess",
+    "debugger"
   ],
   "host_permissions": [
     "<all_urls>"

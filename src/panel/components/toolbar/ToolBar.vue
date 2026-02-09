@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { IconFileSettingsFilled } from '@tabler/icons-vue';
+import { IconFileSettingsFilled, IconForbid2Filled } from '@tabler/icons-vue';
 import { useApp } from '@/panel/stores/app';
 import { disableDisableCache, enableDisableCache } from '@/panel/utils/cache-control';
+import { NETWORK_PRESETS, setNetworkThrottling } from '@/panel/utils/throttling';
 
 const { isKeepLog, isStopCache, throttlingType, typeFilters, statusFilters } = storeToRefs(useApp());
 const isThrottling = ref(!!throttlingType.value);
 watch(isThrottling, () => {
   if (!isThrottling.value) {
-    throttlingType.value = 0;
+    throttlingType.value = null;
   }
 });
-const showThrottlingPopover = computed(() => isThrottling.value && throttlingType.value === 0);
+const showThrottlingPopover = computed(() => isThrottling.value && throttlingType.value === null);
 const typeList = [
   'FETCH/XHR',
   'DOCUMENT',
@@ -30,17 +31,12 @@ const statusList = [
   '5xx',
   'CUSTOM',
 ];
-const throttlingList = [
-  { label: 'High 4G', value: 1 },
-  { label: 'Low 4G', value: 2 },
-  { label: '3G', value: 3 },
-  { label: 'OFFLINE', value: 4 },
-];
 const throttlingLabel = computed(() => {
-  return `THROTTLING (${throttlingList.find(t => t.value === throttlingType.value)?.label || 'OFF'})`;
+  return `THROTTLING (${Object.keys(NETWORK_PRESETS).find(t => t === throttlingType.value) || 'OFF'})`;
 });
-function handleThrottlingChange(value: number) {
+function handleThrottlingChange(value: string | null) {
   throttlingType.value = value;
+  setNetworkThrottling(value);
 }
 function filterChange(t: Ref<string[]>, value: string) {
   if (t.value.includes(value)) {
@@ -68,25 +64,27 @@ function stopCacheChange(value: boolean) {
   <section class="py-2 flex flex-col gap-4 transition-all duration-500 mt-2">
     <div class="flex flex-wrap gap-2 gap-y-4">
       <QuasiSwitch
-        key="keepLog"
         v-model:value="isKeepLog"
         text="KEEP LOG"
         @change="keepLogChange"
       />
       <QuasiSwitch
-        key="stopCache"
         v-model:value="isStopCache"
         text="STOP CACHE"
         @change="stopCacheChange"
       />
       <ElPopover placement="top" :width="400" :visible="showThrottlingPopover">
         <div class="flex gap-2 p-2!">
-          <QuasiButton v-for="t in throttlingList" :key="t.value" @click="handleThrottlingChange(t.value)">
-            {{ t.label }}
+          <QuasiButton v-for="t in Object.keys(NETWORK_PRESETS)" :key="t" @click="handleThrottlingChange(t)">
+            {{ t }}
           </QuasiButton>
         </div>
         <template #reference>
-          <QuasiSwitch key="throttlingMode" v-model:value="isThrottling" :text="throttlingLabel" />
+          <QuasiSwitch
+            v-model:value="isThrottling"
+            :text="throttlingLabel"
+            @change="handleThrottlingChange(null)"
+          />
         </template>
       </ElPopover>
     </div>
@@ -95,10 +93,11 @@ function stopCacheChange(value: boolean) {
         TYPES FILTER:
       </h1>
       <article class="flex gap-2 mt-2">
-        <div class="pr-3 border-r-2 border-gray-300">
+        <div class="flex gap-3 pr-2">
           <QuasiButton class="h-full px-6" :activated="typeFilters.length === 0" @click="() => typeFilters = []">
             ALL
           </QuasiButton>
+          <QuasiBar class="h-full" />
         </div>
         <div class=" flex flex-wrap gap-2 gap-y-4">
           <QuasiButton
@@ -123,12 +122,13 @@ function stopCacheChange(value: boolean) {
       </RoundButton>
       <article class="flex flex-wrap gap-2 mt-2">
         <div class="flex gap-2">
-          <div class="pr-3 border-r-2 border-gray-300">
+          <div class="flex gap-3 pr-2">
             <QuasiButton class="h-full px-6" :activated="statusFilters.length === 0" @click="() => statusFilters = []">
               ALL
             </QuasiButton>
+            <QuasiBar class="h-full" />
           </div>
-          <div class=" flex flex-wrap gap-2 gap-y-4">
+          <div class="flex flex-wrap gap-2 gap-y-4">
             <QuasiButton
               v-for="status in statusList"
               :key="status"
@@ -141,9 +141,14 @@ function stopCacheChange(value: boolean) {
         </div>
       </article>
     </QuasiContainer>
-    <QuasiContainer class="flex px-2!">
-      <QuasiInput class="w-72" place-holder="Filter..." />
-      <QuasiButton>FILTER</QuasiButton>
+    <QuasiContainer class="flex px-2! justify-between!">
+      <RoundButton>
+        <ElTooltip content="Clear network logs" placement="top">
+          <IconForbid2Filled :size="18" />
+        </ElTooltip>
+      </RoundButton>
+      <QuasiBar class="h-8!" />
+      <QuasiInput place-holder="Filter..." />
     </QuasiContainer>
   </section>
 </template>

@@ -1,8 +1,10 @@
+import type { NETWORK_PRESETS } from '@/panel/utils/throttling';
+
 const name = import.meta.env.VITE_APP_ROUTER_PREFIX;
 export const useApp = defineStore(`${name}-APP`, () => {
   const isKeepLog = ref(false);
   const isStopCache = ref(false);
-  const throttlingType = ref(0);
+  const throttlingType = ref<keyof typeof NETWORK_PRESETS | null>(null);
   const typeFilters = ref<string[]>([]);
   const statusFilters = ref<string[]>([]);
   return {

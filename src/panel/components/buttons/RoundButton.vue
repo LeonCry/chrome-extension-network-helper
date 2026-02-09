@@ -1,9 +1,5 @@
-<script setup lang="ts">
-defineProps<{ activated?: boolean }>();
-</script>
-
 <template>
-  <button class="btn" :class="{ 'btn-activated': activated }">
+  <button class="btn">
     <slot class="inner-slot" />
   </button>
 </template>
@@ -21,8 +17,7 @@ defineProps<{ activated?: boolean }>();
     -4px -4px 8px var(--btn_shadow_l);
 }
 .btn:hover {
-  font-weight: 1000;
-  color: var(--btn_hover);
+  color: var(--btn_activated);
   box-shadow:
     6px 6px 12px var(--btn_shadow_r),
     -6px -6px 12px var(--btn_shadow_l);
@@ -31,9 +26,5 @@ defineProps<{ activated?: boolean }>();
   box-shadow:
     inset 4px 4px 12px var(--btn_shadow_r),
     inset -4px -4px 12px var(--btn_shadow_l);
-}
-.btn-activated {
-  color: var(--btn_activated);
-  font-weight: 1000;
 }
 </style>
