@@ -1,8 +1,12 @@
 <script setup lang="ts">
+import type { EventHook } from '@vueuse/core';
 import { IconFileSettingsFilled, IconForbid2Filled } from '@tabler/icons-vue';
 import { useApp } from '@/panel/stores/app';
+import { CLEAR_HOOK_KEY } from '@/panel/symbols';
 import { disableDisableCache, enableDisableCache } from '@/panel/utils/cache-control';
 import { NETWORK_PRESETS, setNetworkThrottling } from '@/panel/utils/throttling';
+
+const clearHook = inject<EventHook<void>>(CLEAR_HOOK_KEY)!;
 
 const { isKeepLog, isStopCache, throttlingType, typeFilters, statusFilters } = storeToRefs(useApp());
 const isThrottling = ref(!!throttlingType.value);
@@ -142,7 +146,7 @@ function stopCacheChange(value: boolean) {
       </article>
     </QuasiContainer>
     <QuasiContainer class="flex px-2! justify-between!">
-      <RoundButton>
+      <RoundButton @click="clearHook.trigger">
         <ElTooltip content="Clear network logs" placement="top">
           <IconForbid2Filled :size="18" />
         </ElTooltip>

@@ -1,16 +1,24 @@
 <script setup lang="ts">
+import type { EventHook } from '@vueuse/core';
 import { IconTableFilled } from '@tabler/icons-vue';
 import { useApp } from '@/panel/stores/app';
+import { CLEAR_HOOK_KEY } from '@/panel/symbols';
+import sizeTransfer from '@/panel/utils/size-transfer';
+import timeTransfer from '@/panel/utils/time-transfer';
 
 defineProps<{ height: number, checkDetail: (row: chrome.devtools.network.Request) => void, contTrans: string }>();
 const appStore = useApp();
 const columns = [
   { field: 'response.status', label: 'STATUS', minWidth: '12%' },
   { field: 'request.method', label: 'TYPE', minWidth: '10%' },
-  { field: 'response.content.size', label: 'SIZE', minWidth: '10%' },
-  { field: 'time', label: 'TIME', minWidth: '10%' },
+  { field: 'response.content.size', label: 'SIZE', minWidth: '10%', formatter: sizeTransfer },
+  { field: 'time', label: 'TIME', minWidth: '10%', formatter: timeTransfer },
 ];
 const tableData = ref<chrome.devtools.network.Request[]>([]);
+const clearHook = inject<EventHook<void>>(CLEAR_HOOK_KEY)!;
+clearHook.on(() => {
+  tableData.value = [];
+});
 function onRequestFinished(request: chrome.devtools.network.Request) {
   tableData.value.push(request);
   // console.log(request);
@@ -78,6 +86,7 @@ function closeContextMenu() {
         :prop="column.field"
         :label="column.label"
         :min-width="column.minWidth"
+        :formatter="column.formatter"
         show-overflow-tooltip
       />
     </ElTable>

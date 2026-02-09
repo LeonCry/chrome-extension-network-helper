@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { IconArrowBigUpFilled, IconSettingsFilled, IconSunHighFilled } from '@tabler/icons-vue';
+import { CLEAR_HOOK_KEY } from '@/panel/symbols';
 // 默认详情高度
 const DEFAULT_DETAIL_HEIGHT = 400;
 // gap高度
@@ -48,6 +49,8 @@ const transformY = computed(() => {
     detailTrans: `translateY(${detailTrans}px)`,
   };
 });
+const clearHook = createEventHook<void>();
+provide(CLEAR_HOOK_KEY, clearHook);
 </script>
 
 <template>
