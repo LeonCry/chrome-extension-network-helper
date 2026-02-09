@@ -22,6 +22,7 @@ defineProps<{ activated?: boolean }>();
 .btn:hover {
   color: var(--btn_hover);
   font-weight: 1000;
+  border: 1px dashed var(--btn_activated);
   box-shadow:
     6px 6px 12px var(--btn_shadow_r),
     -6px -6px 12px var(--btn_shadow_l);
@@ -32,7 +33,22 @@ defineProps<{ activated?: boolean }>();
     inset -4px -4px 12px var(--btn_shadow_l);
 }
 .btn-activated {
-  color: var(--btn_activated);
+  color: var(--primary);
+  background-color: var(--btn_activated);
+  box-shadow:
+    -2px -2px 8px var(--btn_activated),
+    4px 4px 4px var(--btn_shadow_r);
+  border: 1px solid var(--btn_activated);
+}
+.btn-activated:hover {
+  color: var(--primary);
   font-weight: 1000;
+  border: 1px dashed var(--btn_bg);
+  box-shadow: 0px 0px 8px var(--btn_activated);
+}
+.btn-activated:active {
+  box-shadow:
+    inset 4px 4px 12px var(--btn_shadow_r),
+    inset -4px -4px 12px var(--btn_shadow_r);
 }
 </style>

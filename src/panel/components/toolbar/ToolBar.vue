@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import { IconFileSettingsFilled } from '@tabler/icons-vue';
+import { useApp } from '@/panel/stores/app';
 
+const { isKeepLog, isStopCache, throttlingType, typeFilters, statusFilters } = storeToRefs(useApp());
+const isThrottling = ref(!!throttlingType.value);
+watch(isThrottling, () => {
+  if (!isThrottling.value) {
+    throttlingType.value = 0;
+  }
+});
+const showThrottlingPopover = computed(() => isThrottling.value && throttlingType.value === 0);
 const typeList = [
   'FETCH/XHR',
   'DOCUMENT',
@@ -21,29 +30,46 @@ const statusList = [
   'CUSTOM',
 ];
 const throttlingList = [
-  'High 4G',
-  'Low 4G',
-  '3G',
-  'OFFLINE',
+  { label: 'High 4G', value: 1 },
+  { label: 'Low 4G', value: 2 },
+  { label: '3G', value: 3 },
+  { label: 'OFFLINE', value: 4 },
 ];
-const keepLog = ref(false);
-const stopCache = ref(false);
-const throttlingMode = ref(false);
+const throttlingLabel = computed(() => {
+  return `THROTTLING (${throttlingList.find(t => t.value === throttlingType.value)?.label || 'OFF'})`;
+});
+function handleThrottlingChange(value: number) {
+  throttlingType.value = value;
+}
+function filterChange(t: Ref<string[]>, value: string) {
+  if (t.value.includes(value)) {
+    t.value = t.value.filter(s => s !== value);
+  }
+  else {
+    t.value.push(value);
+  }
+}
+function handleStatusChange(status: string) {
+  filterChange(statusFilters, status);
+}
+function handleTypeChange(type: string) {
+  filterChange(typeFilters, type);
+}
 </script>
 
 <template>
   <section class="py-2 flex flex-col gap-4 transition-all duration-500 mt-2">
     <div class="flex flex-wrap gap-2 gap-y-4">
-      <QuasiSwitch key="keepLog" v-model:value="keepLog" text="KEEP LOG" />
-      <QuasiSwitch key="stopCache" v-model:value="stopCache" text="STOP CACHE" />
-      <ElPopover placement="top" :width="400" :visible="throttlingMode">
+      <QuasiSwitch key="keepLog" v-model:value="isKeepLog" text="KEEP LOG" />
+      <QuasiSwitch key="stopCache" v-model:value="isStopCache" text="STOP CACHE" />
+      <ElPopover placement="top" :width="400" :visible="showThrottlingPopover">
         <div class="flex gap-2 p-2!">
-          <QuasiButton v-for="t in throttlingList" :key="t">
-            {{ t }}
+          <QuasiButton v-for="t in throttlingList" :key="t.value" @click="handleThrottlingChange(t.value)">
+            {{ t.label }}
           </QuasiButton>
         </div>
         <template #reference>
-          <QuasiSwitch key="throttlingMode" v-model:value="throttlingMode" text="THROTTLING" />
+          <QuasiSwitch key="throttlingMode" v-model:value="isThrottling" :text="throttlingLabel" />
         </template>
       </ElPopover>
     </div>
@@ -53,12 +79,17 @@ const throttlingMode = ref(false);
       </h1>
       <article class="flex gap-2 mt-2">
         <div class="pr-3 border-r-2 border-gray-300">
-          <QuasiButton class="h-full px-6">
+          <QuasiButton class="h-full px-6" :activated="typeFilters.length === 0" @click="() => typeFilters = []">
             ALL
           </QuasiButton>
         </div>
         <div class=" flex flex-wrap gap-2 gap-y-4">
-          <QuasiButton v-for="type in typeList" :key="type">
+          <QuasiButton
+            v-for="type in typeList"
+            :key="type"
+            :activated="typeFilters.includes(type)"
+            @click="handleTypeChange(type)"
+          >
             {{ type }}
           </QuasiButton>
         </div>
@@ -76,12 +107,17 @@ const throttlingMode = ref(false);
       <article class="flex flex-wrap gap-2 mt-2">
         <div class="flex gap-2">
           <div class="pr-3 border-r-2 border-gray-300">
-            <QuasiButton class="h-full px-6">
+            <QuasiButton class="h-full px-6" :activated="statusFilters.length === 0" @click="() => statusFilters = []">
               ALL
             </QuasiButton>
           </div>
           <div class=" flex flex-wrap gap-2 gap-y-4">
-            <QuasiButton v-for="status in statusList" :key="status">
+            <QuasiButton
+              v-for="status in statusList"
+              :key="status"
+              :activated="statusFilters.includes(status)"
+              @click="handleStatusChange(status)"
+            >
               {{ status }}
             </QuasiButton>
           </div>

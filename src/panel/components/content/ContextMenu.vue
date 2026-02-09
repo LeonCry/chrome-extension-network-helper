@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { IconCopyrightFilled, IconLocationFilled, IconLockFilled } from '@tabler/icons-vue';
+import { copy } from '@/panel/utils/copy';
 
 const props = defineProps<{
   contextInfo?: { event: MouseEvent, row: chrome.devtools.network.Request }
@@ -8,12 +9,19 @@ const props = defineProps<{
 const contextMenuRef = useTemplateRef<HTMLDivElement | null>('contextMenuRef');
 onClickOutside(contextMenuRef, props.close);
 const contextMenus = [
-  { label: 'Copy all', icon: IconCopyrightFilled },
-  { label: 'Copy to postman', icon: IconLocationFilled },
-  { label: 'Lock', icon: IconLockFilled },
+  { label: 'Copy all', icon: IconCopyrightFilled, action: copyAll },
+  { label: 'Copy to postman', icon: IconLocationFilled, action: copyToPostman },
+  { label: 'Lock', icon: IconLockFilled, action: lock },
 ];
-function handleOperation(item: (typeof contextMenus)[number]) {
+function copyAll(text: string) {
+  copy(text);
   props.close();
+};
+function copyToPostman(text: string) {
+  copyAll(text);
+}
+function lock() {
+  console.warn('lock');
 }
 </script>
 
@@ -25,7 +33,7 @@ function handleOperation(item: (typeof contextMenus)[number]) {
     :style="{ top: `${props.contextInfo.event.y}px`, left: `${props.contextInfo.event.x}px` }"
   >
     <div v-for="item in contextMenus" :key="item.label">
-      <QuasiButton class="px-6 py-1 hover:text-text_primary_red!" @click="handleOperation(item)">
+      <QuasiButton class="px-6 py-1 hover:text-text_primary_red!" @click="item.action?.(item.label)">
         <ElTooltip :content="item.label" placement="right">
           <component :is="item.icon" :size="24" />
         </ElTooltip>

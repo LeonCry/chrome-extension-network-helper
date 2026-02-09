@@ -34,6 +34,7 @@ const uid = `quasi-switch-${Math.random().toString(36).slice(2)}`;
     -4px -4px 8px var(--btn_shadow_l);
   justify-content: space-between;
   align-items: center;
+  transition: all 0.3s;
 }
 
 .switch-toggle {
