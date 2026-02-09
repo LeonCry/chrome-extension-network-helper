@@ -7,6 +7,7 @@
   --color-text_primary_blue: var(--text_primary_blue);
   --color-text_primary_red: var(--text_primary_red);
   --color-gray_300: var(--gray_300);
+  --color-text_slate: var(--text_slate);
 }
 
 :root {
@@ -23,6 +24,7 @@
   --btn_shadow_l: #ffffff;
   --btn_shadow_r: #c5c5c5;
   --gray_300: #d1d5dc;
+  --text_slate: #62748e;
 }
 .dark {
   --background: #09090b;

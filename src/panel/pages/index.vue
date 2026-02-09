@@ -34,10 +34,7 @@ const assignH = computed(() => mainH.value - headerH.value);
 const contentH = computed(() => {
   const bh = showBar.value ? toolBarH.value : 0;
   const dh = detailRow.value ? detailH.value : 0;
-  let gapCount = 3;
-  gapCount += Number(bh / bh) || 0;
-  gapCount += Number(dh / dh) || 0;
-  return assignH.value - bh - dh - GAP_HEIGHT * gapCount;
+  return assignH.value - bh - dh - GAP_HEIGHT * 2;
 });
 const transformY = computed(() => {
   let detailTrans = 0;
@@ -56,7 +53,7 @@ provide(CLEAR_HOOK_KEY, clearHook);
 <template>
   <main
     ref="mainRef"
-    class="w-full h-full bg-background text-foreground px-4 pb-4 text-sm overflow-hidden"
+    class="w-full h-full bg-background text-foreground pb-4 text-sm overflow-hidden"
   >
     <header
       ref="headerRef"

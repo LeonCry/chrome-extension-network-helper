@@ -13,11 +13,16 @@ function close() {
 </script>
 
 <template>
-  <section class="detail-container transition-all duration-500 mt-2" :style="{ height: `${height}px` }">
-    <RoundButton class="p-1! -top-2 -right-2 absolute z-10" @click="close">
-      <IconX :size="18" />
-    </RoundButton>
-    <QuasiTab />
+  <section
+    class=" transition-all duration-500 relative z-2 px-4 bg-background"
+    :style="{ height: `${height}px` }"
+  >
+    <div class="detail-container w-full h-[96%] mt-[3%]">
+      <RoundButton class="p-1! -top-2 -right-2 absolute z-10" @click="close">
+        <IconX :size="18" />
+      </RoundButton>
+      <QuasiTab />
+    </div>
   </section>
 </template>
 

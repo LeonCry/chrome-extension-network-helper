@@ -3,8 +3,10 @@ import type { EventHook } from '@vueuse/core';
 import { IconTableFilled } from '@tabler/icons-vue';
 import { useApp } from '@/panel/stores/app';
 import { CLEAR_HOOK_KEY } from '@/panel/symbols';
-import sizeTransfer from '@/panel/utils/size-transfer';
-import timeTransfer from '@/panel/utils/time-transfer';
+import { sizeTransfer } from '@/panel/utils/size-transfer';
+import { timeTransfer } from '@/panel/utils/time-transfer';
+import { urlTransfer } from '@/panel/utils/ulr-transfer';
+import { getResourceTypeIcon } from './resource-type-icons';
 
 defineProps<{ height: number, checkDetail: (row: chrome.devtools.network.Request) => void, contTrans: string }>();
 const appStore = useApp();
@@ -45,11 +47,24 @@ function handleContextMenu(event: MouseEvent, row: chrome.devtools.network.Reque
 function closeContextMenu() {
   showContextMenu.value = false;
 }
+const tooltipVisible = ref(false);
+const triggerRef = ref<HTMLElement | null>(null);
+const tooltipContent = ref('');
+function handleTooltipMouseEnter(e: MouseEvent, content: string) {
+  triggerRef.value = e.currentTarget as HTMLDivElement;
+  tooltipContent.value = content;
+  tooltipVisible.value = true;
+}
+function handleTooltipMouseLeave() {
+  tooltipVisible.value = false;
+}
+const containerRef = useTemplateRef<HTMLDivElement>('containerRef');
 </script>
 
 <template>
   <section
-    class="table-container relative transition-all duration-500 delay-200 mt-2"
+    ref="containerRef"
+    class="table-container relative transition-all duration-500 delay-200 mt-2 z-0 mx-4"
     :style="{ height: `${height}px`, transform: contTrans }"
   >
     <RoundButton class="absolute -top-2 -right-2 z-10">
@@ -68,15 +83,23 @@ function closeContextMenu() {
         prop="request.url"
         label="NAME"
         min-width="30%"
-        show-overflow-tooltip
       >
         <template #default="{ row }">
           <div
-            class="cursor-pointer text-text_primary_blue! hover:text-text_primary_red! py-[2px] truncate"
+            class="cursor-pointer text-text_primary_blue! hover:text-text_primary_red! hover:underline py-[2px]"
             @contextmenu="(e) => handleContextMenu(e, row)"
+            @mouseenter="(e) => handleTooltipMouseEnter(e, row.request.url)"
+            @mouseleave="handleTooltipMouseLeave"
             @click="checkDetail(row)"
           >
-            {{ row.request.url }}
+            <component
+              :is="getResourceTypeIcon(row._resourceType)"
+              class="absolute left-1 top-1/2 translate-y-[-50%] text-text_slate"
+              :size="18"
+            />
+            <p class="truncate ml-3">
+              {{ urlTransfer(row.request.url) }}
+            </p>
           </div>
         </template>
       </ElTableColumn>
@@ -90,6 +113,15 @@ function closeContextMenu() {
         show-overflow-tooltip
       />
     </ElTable>
+    <ElTooltip
+      v-if="containerRef"
+      :append-to="containerRef!"
+      :visible="tooltipVisible"
+      :virtual-ref="triggerRef!"
+      virtual-triggering
+      :content="tooltipContent"
+      placement="top"
+    />
   </section>
   <ContextMenu v-if="showContextMenu" :context-info="contextInfo" :close="closeContextMenu" />
 </template>

@@ -1,4 +1,4 @@
-export default function TimeTransfer(_r: any, _c: any, cellValue: any) {
+export function timeTransfer(_r: any, _c: any, cellValue: any) {
   if (cellValue < 1000) {
     return `${cellValue.toFixed(2)}ms`;
   }

@@ -26,6 +26,7 @@ const typeList = [
   'MEDIA',
   'LIST',
   'WASM',
+  'SOCKET',
   'OTHER',
 ];
 const statusList = [
@@ -65,7 +66,7 @@ function stopCacheChange(value: boolean) {
 </script>
 
 <template>
-  <section class="py-2 flex flex-col gap-4 transition-all duration-500 mt-2">
+  <section class="py-2 flex flex-col gap-4 transition-all duration-500 pt-4 px-4 z-1 relative bg-background">
     <div class="flex flex-wrap gap-2 gap-y-4">
       <QuasiSwitch
         v-model:value="isKeepLog"
