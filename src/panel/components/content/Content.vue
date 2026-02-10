@@ -1,34 +1,54 @@
 <script setup lang="ts">
-import type { EventHook } from '@vueuse/core';
 import { IconTableFilled } from '@tabler/icons-vue';
+import { useEvents } from '@/panel/hooks/useEvent';
 import { useApp } from '@/panel/stores/app';
-import { CLEAR_HOOK_KEY } from '@/panel/symbols';
 import { sizeTransfer } from '@/panel/utils/size-transfer';
 import { timeTransfer } from '@/panel/utils/time-transfer';
 import { urlTransfer } from '@/panel/utils/ulr-transfer';
 import { getResourceTypeIcon } from './resource-type-icons';
 
-defineProps<{ height: number, checkDetail: (row: chrome.devtools.network.Request) => void, contTrans: string }>();
-const appStore = useApp();
+const props = defineProps<{
+  height: number
+  checkDetail: (row: ChromeRequest) => void
+  contTrans: string
+}>();
+const { isKeepLog, typeFilters, statusFilters, searchValue, isSearchByKey } = storeToRefs(useApp());
+const { onClear } = useEvents();
 const columns = [
   { field: 'response.status', label: 'STATUS', minWidth: '12%' },
   { field: 'request.method', label: 'TYPE', minWidth: '10%' },
   { field: 'response.content.size', label: 'SIZE', minWidth: '10%', formatter: sizeTransfer },
   { field: 'time', label: 'TIME', minWidth: '10%', formatter: timeTransfer },
 ];
-const tableData = ref<chrome.devtools.network.Request[]>([]);
-const clearHook = inject<EventHook<void>>(CLEAR_HOOK_KEY)!;
-clearHook.on(() => {
+const tableData = ref<ChromeRequest[]>([]);
+const filteredTableData = computed(() => {
+  return tableData.value.filter((item) => {
+    const searchResult = isSearchByKey.value
+      ? item._miniUrl.includes(searchValue.value)
+      : item.request.url.includes(searchValue.value);
+    const searchEffect = searchValue.value.length > 0 ? searchResult : true;
+    const typeFilter = [...typeFilters.value];
+    if (typeFilter.includes('fetch')) typeFilter.push('xhr');
+    const typeResult = typeFilter.includes(item._resourceType);
+    const typeEffect = typeFilter.length > 0 ? typeResult : true;
+    const statusResult = statusFilters.value.includes(String(item.response.status)[0] || 'pending');
+    const statusEffect = statusFilters.value.length > 0 ? statusResult : true;
+    return typeEffect && statusEffect && searchEffect;
+  });
+});
+onClear(() => {
   tableData.value = [];
 });
+
 function onRequestFinished(request: chrome.devtools.network.Request) {
-  tableData.value.push(request);
+  request._miniUrl = urlTransfer(request.request.url);
+  tableData.value.push(request as ChromeRequest);
   // console.log(request);
 }
 chrome.devtools.network.onRequestFinished.addListener(onRequestFinished);
 // 页面刷新
 function onNavigated() {
-  if (appStore.isKeepLog) return;
+  if (isKeepLog.value) return;
   tableData.value = [];
 }
 chrome.devtools.network.onNavigated.addListener(onNavigated);
@@ -38,8 +58,8 @@ onBeforeUnmount(() => {
 });
 // 右键菜单
 const showContextMenu = ref(false);
-const contextInfo = ref<{ event: MouseEvent, row: chrome.devtools.network.Request }>();
-function handleContextMenu(event: MouseEvent, row: chrome.devtools.network.Request) {
+const contextInfo = ref<{ event: MouseEvent, row: ChromeRequest }>();
+function handleContextMenu(event: MouseEvent, row: ChromeRequest) {
   showContextMenu.value = true;
   contextInfo.value = { event, row };
   event.preventDefault();
@@ -59,6 +79,10 @@ function handleTooltipMouseLeave() {
   tooltipVisible.value = false;
 }
 const containerRef = useTemplateRef<HTMLDivElement>('containerRef');
+function goDetails(row: ChromeRequest) {
+  tooltipVisible.value = false;
+  props.checkDetail(row);
+}
 </script>
 
 <template>
@@ -74,13 +98,13 @@ const containerRef = useTemplateRef<HTMLDivElement>('containerRef');
     </RoundButton>
     <ElTable
       v-if="height"
-      :data="tableData"
+      :data="filteredTableData"
       height="100%"
       class="neumorph-table"
       style="width: 100%;height: 100%;"
     >
       <ElTableColumn
-        prop="request.url"
+        prop="_miniUrl"
         label="NAME"
         min-width="30%"
       >
@@ -90,7 +114,7 @@ const containerRef = useTemplateRef<HTMLDivElement>('containerRef');
             @contextmenu="(e) => handleContextMenu(e, row)"
             @mouseenter="(e) => handleTooltipMouseEnter(e, row.request.url)"
             @mouseleave="handleTooltipMouseLeave"
-            @click="checkDetail(row)"
+            @click="goDetails(row)"
           >
             <component
               :is="getResourceTypeIcon(row._resourceType)"
@@ -98,7 +122,7 @@ const containerRef = useTemplateRef<HTMLDivElement>('containerRef');
               :size="18"
             />
             <p class="truncate ml-3">
-              {{ urlTransfer(row.request.url) }}
+              {{ row._miniUrl }}
             </p>
           </div>
         </template>

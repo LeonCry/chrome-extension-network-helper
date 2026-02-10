@@ -3,7 +3,7 @@ import { IconCopyrightFilled, IconLocationFilled, IconLockFilled } from '@tabler
 import { copy } from '@/panel/utils/copy';
 
 const props = defineProps<{
-  contextInfo?: { event: MouseEvent, row: chrome.devtools.network.Request }
+  contextInfo?: { event: MouseEvent, row: ChromeRequest }
   close: () => void
 }>();
 const contextMenuRef = useTemplateRef<HTMLDivElement | null>('contextMenuRef');

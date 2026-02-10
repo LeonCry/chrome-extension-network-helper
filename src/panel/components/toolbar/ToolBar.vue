@@ -1,14 +1,21 @@
 <script setup lang="ts">
-import type { EventHook } from '@vueuse/core';
 import { IconFileSettingsFilled, IconForbid2Filled } from '@tabler/icons-vue';
+import { useEvents } from '@/panel/hooks/useEvent';
 import { useApp } from '@/panel/stores/app';
-import { CLEAR_HOOK_KEY } from '@/panel/symbols';
 import { disableDisableCache, enableDisableCache } from '@/panel/utils/cache-control';
 import { NETWORK_PRESETS, setNetworkThrottling } from '@/panel/utils/throttling';
 
-const clearHook = inject<EventHook<void>>(CLEAR_HOOK_KEY)!;
+const { clearTrigger } = useEvents();
 
-const { isKeepLog, isStopCache, throttlingType, typeFilters, statusFilters } = storeToRefs(useApp());
+const {
+  isKeepLog,
+  isStopCache,
+  throttlingType,
+  typeFilters,
+  statusFilters,
+  searchValue,
+  isSearchByKey,
+} = storeToRefs(useApp());
 const isThrottling = ref(!!throttlingType.value);
 watch(isThrottling, () => {
   if (!isThrottling.value) {
@@ -17,24 +24,24 @@ watch(isThrottling, () => {
 });
 const showThrottlingPopover = computed(() => isThrottling.value && throttlingType.value === null);
 const typeList = [
-  'FETCH/XHR',
-  'DOCUMENT',
-  'CSS',
-  'JS',
-  'FONT',
-  'PICTURE',
-  'MEDIA',
-  'LIST',
-  'WASM',
-  'SOCKET',
-  'OTHER',
+  { key: 'FETCH/XHR', value: 'fetch' },
+  { key: 'DOCUMENT', value: 'document' },
+  { key: 'CSS', value: 'stylesheet' },
+  { key: 'JS', value: 'script' },
+  { key: 'FONT', value: 'font' },
+  { key: 'IMAGE', value: 'image' },
+  { key: 'MEDIA', value: 'media' },
+  { key: 'MANIFEST', value: 'manifest' },
+  { key: 'WASM', value: 'wasm' },
+  { key: 'SOCKET', value: 'websocket' },
+  { key: 'OTHER', value: 'other' },
 ];
 const statusList = [
-  '2xx',
-  '3xx',
-  '4xx',
-  '5xx',
-  'CUSTOM',
+  { key: '2XX', value: '2' },
+  { key: '3XX', value: '3' },
+  { key: '4XX', value: '4' },
+  { key: '5XX', value: '5' },
+  { key: 'PENDING', value: 'pending' },
 ];
 const throttlingLabel = computed(() => {
   return `THROTTLING (${Object.keys(NETWORK_PRESETS).find(t => t === throttlingType.value) || 'OFF'})`;
@@ -107,11 +114,11 @@ function stopCacheChange(value: boolean) {
         <div class=" flex flex-wrap gap-2 gap-y-4">
           <QuasiButton
             v-for="type in typeList"
-            :key="type"
-            :activated="typeFilters.includes(type)"
-            @click="handleTypeChange(type)"
+            :key="type.value"
+            :activated="typeFilters.includes(type.value)"
+            @click="handleTypeChange(type.value)"
           >
-            {{ type }}
+            {{ type.key }}
           </QuasiButton>
         </div>
       </article>
@@ -136,24 +143,25 @@ function stopCacheChange(value: boolean) {
           <div class="flex flex-wrap gap-2 gap-y-4">
             <QuasiButton
               v-for="status in statusList"
-              :key="status"
-              :activated="statusFilters.includes(status)"
-              @click="handleStatusChange(status)"
+              :key="status.value"
+              :activated="statusFilters.includes(status.value)"
+              @click="handleStatusChange(status.value)"
             >
-              {{ status }}
+              {{ status.key }}
             </QuasiButton>
           </div>
         </div>
       </article>
     </QuasiContainer>
-    <QuasiContainer class="flex px-2! justify-between!">
-      <RoundButton @click="clearHook.trigger">
+    <QuasiContainer class="flex px-2! relative">
+      <RoundButton @click="clearTrigger">
         <ElTooltip content="Clear network logs" placement="top">
           <IconForbid2Filled :size="18" />
         </ElTooltip>
       </RoundButton>
       <QuasiBar class="h-8!" />
-      <QuasiInput place-holder="Filter..." />
+      <QuasiInput v-model:value="searchValue" placeholder="search..." />
+      <PureSwitch v-model:value="isSearchByKey" />
     </QuasiContainer>
   </section>
 </template>

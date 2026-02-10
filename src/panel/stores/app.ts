@@ -7,11 +7,15 @@ export const useApp = defineStore(`${name}-APP`, () => {
   const throttlingType = ref<keyof typeof NETWORK_PRESETS | null>(null);
   const typeFilters = ref<string[]>([]);
   const statusFilters = ref<string[]>([]);
+  const searchValue = ref('');
+  const isSearchByKey = ref(true);
   return {
     isKeepLog,
     isStopCache,
     throttlingType,
     typeFilters,
     statusFilters,
+    searchValue,
+    isSearchByKey,
   };
 }, { persist: true });

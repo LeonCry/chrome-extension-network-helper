@@ -1,9 +1,19 @@
 <script setup lang="ts">
-defineProps<{ placeHolder?: string }>();
+const props = defineProps<{
+  value: string
+  placeholder?: string
+}>();
+const emits = defineEmits<{ 'update:value': [string], 'change': [string] }>();
+const value = useVModel(props, 'value', emits);
 </script>
 
 <template>
-  <input class="input" type="text" :placeholder="placeHolder">
+  <input
+    v-model="value"
+    class="input"
+    type="text"
+    :placeholder="placeholder"
+  >
 </template>
 
 <style scoped>

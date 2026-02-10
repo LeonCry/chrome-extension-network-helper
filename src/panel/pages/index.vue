@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { IconArrowBigUpFilled, IconSettingsFilled, IconSunHighFilled } from '@tabler/icons-vue';
-import { CLEAR_HOOK_KEY } from '@/panel/symbols';
 // 默认详情高度
 const DEFAULT_DETAIL_HEIGHT = 400;
 // gap高度
@@ -15,7 +14,7 @@ function handleShowBar() {
 }
 // 查看详情
 const detailRow = ref<string | null>(null);
-function checkDetail(row: chrome.devtools.network.Request) {
+function checkDetail(row: ChromeRequest) {
   row.getContent((content) => {
     detailRow.value = content;
   });
@@ -46,8 +45,6 @@ const transformY = computed(() => {
     detailTrans: `translateY(${detailTrans}px)`,
   };
 });
-const clearHook = createEventHook<void>();
-provide(CLEAR_HOOK_KEY, clearHook);
 </script>
 
 <template>
@@ -57,7 +54,7 @@ provide(CLEAR_HOOK_KEY, clearHook);
   >
     <header
       ref="headerRef"
-      class="flex items-center gap-2 bg-background py-4 z-10 border-b border-gray-300 relative"
+      class="flex items-center gap-2 bg-background py-4 px-4 z-10 border-b border-gray-300 relative"
     >
       <img src="/logo-Q-light.png" alt="logo" class="w-16 absolute">
       <span class="flex-1" />
