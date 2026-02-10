@@ -1,5 +1,7 @@
-<script setup lang="ts">
+<script setup lang="tsx">
+import type { Column, TableV2Instance } from 'element-plus';
 import { IconTableFilled } from '@tabler/icons-vue';
+import { TableV2FixedDir } from 'element-plus';
 import { useEvents } from '@/panel/hooks/useEvent';
 import { useApp } from '@/panel/stores/app';
 import { sizeTransfer } from '@/panel/utils/size-transfer';
@@ -14,12 +16,40 @@ const props = defineProps<{
 }>();
 const { isKeepLog, typeFilters, statusFilters, searchValue, isSearchByKey } = storeToRefs(useApp());
 const { onClear } = useEvents();
-const columns = [
-  { field: 'response.status', label: 'STATUS', minWidth: '12%' },
-  { field: 'request.method', label: 'TYPE', minWidth: '10%' },
-  { field: 'response.content.size', label: 'SIZE', minWidth: '10%', formatter: sizeTransfer },
-  { field: 'time', label: 'TIME', minWidth: '10%', formatter: timeTransfer },
-];
+const customColumns = ref<Column[]>([
+  {
+    key: '_miniUrl',
+    dataKey: '_miniUrl',
+    title: 'NAME',
+    width: 180,
+    fixed: TableV2FixedDir.LEFT,
+    cellRenderer: ({ rowData }: { rowData: ChromeRequest }) => {
+      const IconComponent = getResourceTypeIcon(rowData._resourceType);
+      return (
+        <div
+          class="w-full cursor-pointer text-text_primary_blue! hover:text-text_primary_red! hover:underline py-[2px]"
+          onContextmenu={e => handleContextMenu(e, rowData)}
+          onMouseenter={e => handleTooltipMouseEnter(e, rowData.request.url)}
+          onMouseleave={() => handleTooltipMouseLeave()}
+          onClick={() => goDetails(rowData)}
+        >
+          <IconComponent
+            class="absolute left-1 top-1/2 translate-y-[-50%] text-text_slate"
+            size={18}
+          />
+          <p class="truncate ml-4">
+            {rowData._miniUrl}
+          </p>
+        </div>
+      );
+    },
+  },
+  { key: 'response.status', dataKey: 'response.status', title: 'STATUS', width: 60 },
+  { key: 'request.method', dataKey: 'request.method', title: 'TYPE', width: 60 },
+  { key: '_size', dataKey: '_size', title: 'SIZE', width: 100 },
+  { key: '_time', dataKey: '_time', title: 'TIME', width: 100 },
+]);
+const tableRef = useTemplateRef<TableV2Instance>('tableRef');
 const tableData = ref<ChromeRequest[]>([]);
 const filteredTableData = computed(() => {
   return tableData.value.filter((item) => {
@@ -40,9 +70,14 @@ onClear(() => {
   tableData.value = [];
 });
 
-function onRequestFinished(request: chrome.devtools.network.Request) {
+async function onRequestFinished(request: chrome.devtools.network.Request) {
+  // formatter
   request._miniUrl = urlTransfer(request.request.url);
+  request._size = sizeTransfer(request.response.content.size);
+  request._time = timeTransfer(request.time);
   tableData.value.push(request as ChromeRequest);
+  await nextTick();
+  tableRef.value?.scrollToRow(tableData.value.length);
   // console.log(request);
 }
 chrome.devtools.network.onRequestFinished.addListener(onRequestFinished);
@@ -83,6 +118,7 @@ function goDetails(row: ChromeRequest) {
   tooltipVisible.value = false;
   props.checkDetail(row);
 }
+const { height: containerH, width: containerW } = useElementBounding(containerRef);
 </script>
 
 <template>
@@ -96,47 +132,16 @@ function goDetails(row: ChromeRequest) {
         <IconTableFilled :size="18" />
       </ElTooltip>
     </RoundButton>
-    <ElTable
-      v-if="height"
+    <ElTableV2
+      v-if="containerH"
+      ref="tableRef"
       :data="filteredTableData"
-      height="100%"
-      class="neumorph-table"
-      style="width: 100%;height: 100%;"
-    >
-      <ElTableColumn
-        prop="_miniUrl"
-        label="NAME"
-        min-width="30%"
-      >
-        <template #default="{ row }">
-          <div
-            class="cursor-pointer text-text_primary_blue! hover:text-text_primary_red! hover:underline py-[2px]"
-            @contextmenu="(e) => handleContextMenu(e, row)"
-            @mouseenter="(e) => handleTooltipMouseEnter(e, row.request.url)"
-            @mouseleave="handleTooltipMouseLeave"
-            @click="goDetails(row)"
-          >
-            <component
-              :is="getResourceTypeIcon(row._resourceType)"
-              class="absolute left-1 top-1/2 translate-y-[-50%] text-text_slate"
-              :size="18"
-            />
-            <p class="truncate ml-3">
-              {{ row._miniUrl }}
-            </p>
-          </div>
-        </template>
-      </ElTableColumn>
-      <ElTableColumn
-        v-for="column in columns"
-        :key="column.field"
-        :prop="column.field"
-        :label="column.label"
-        :min-width="column.minWidth"
-        :formatter="column.formatter"
-        show-overflow-tooltip
-      />
-    </ElTable>
+      :height="containerH"
+      :columns="customColumns"
+      :width="containerW"
+      fixed
+      class="v2table-class"
+    />
     <ElTooltip
       v-if="containerRef"
       :append-to="containerRef!"
@@ -157,34 +162,28 @@ function goDetails(row: ChromeRequest) {
     4px 4px 8px var(--btn_shadow_r),
     -4px -4px 8px var(--btn_shadow_l);
 }
-.neumorph-table {
+.v2table-class {
   border-radius: 12px;
   font-size: 12px;
-  background: var(--container_bg);
-  overflow: hidden;
+}
+:deep(.v2table-class .el-table-v2__main) {
+  background-color: var(--container_bg);
 }
 
-:deep(.neumorph-table .el-table__inner-wrapper) {
+:deep(.v2table-class .el-table-v2__header) {
   background: transparent;
 }
-:deep(.neumorph-table .el-table__header-wrapper),
-:deep(.neumorph-table .el-table__body-wrapper) {
-  background: transparent;
-}
-
-:deep(.neumorph-table .el-table__header .el-table__cell) {
+:deep(.v2table-class .el-table-v2__header-cell) {
   background: var(--btn_bg);
   border-right: 1px solid var(--gray_300);
   border-bottom: 1px solid var(--gray_300);
 }
-
-:deep(.neumorph-table .el-table__row .el-table__cell) {
+:deep(.v2table-class .el-table-v2__row-cell) {
   background: var(--btn_bg);
+  border: none;
   border-bottom: 1px solid var(--gray_300);
-  padding: 0;
 }
-
-:deep(.neumorph-table .el-table__row:hover .el-table__cell) {
+:deep(.v2table-class .el-table-v2__row:hover .el-table-v2__row-cell) {
   background: var(--table_hover_bg);
 }
 </style>

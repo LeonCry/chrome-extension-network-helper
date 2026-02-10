@@ -5,6 +5,7 @@ import { crx } from '@crxjs/vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
 import legacy from '@vitejs/plugin-legacy';
 import Vue from '@vitejs/plugin-vue';
+import vueJsx from '@vitejs/plugin-vue-jsx';
 import browserslist from 'browserslist';
 import { browserslistToTargets } from 'lightningcss';
 import AutoImport from 'unplugin-auto-import/vite';
@@ -21,6 +22,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
     resolve: { alias: { '@': `${path.resolve(__dirname, 'src')}` } },
     plugins: [
       Vue(),
+      vueJsx(),
       tailwindcss(),
       crx({ manifest }),
       AutoImport({

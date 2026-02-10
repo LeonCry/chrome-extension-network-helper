@@ -1,4 +1,4 @@
-export function sizeTransfer(_r: any, _c: any, cellValue: any) {
+export function sizeTransfer(cellValue: number) {
   if (cellValue < 1024) {
     return `${cellValue.toFixed(2)}B`;
   }

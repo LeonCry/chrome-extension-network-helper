@@ -2,6 +2,8 @@
 import { IconArrowBigUpFilled, IconSettingsFilled, IconSunHighFilled } from '@tabler/icons-vue';
 // 默认详情高度
 const DEFAULT_DETAIL_HEIGHT = 400;
+// 搜索框高度
+const TOOL_BAR_HEIGHT = 130;
 // gap高度
 const GAP_HEIGHT = 8;
 function toggleTheme() {
@@ -37,11 +39,11 @@ const contentH = computed(() => {
 });
 const transformY = computed(() => {
   let detailTrans = 0;
-  if (!showBar.value) detailTrans -= toolBarH.value;
+  if (!showBar.value) detailTrans -= toolBarH.value - TOOL_BAR_HEIGHT / 2;
   if (!detailRow.value) detailTrans += detailH.value;
   return {
-    barTrans: `translateY(-${!showBar.value ? toolBarH.value + headerH.value : 0}px)`,
-    contTrans: `translateY(-${!showBar.value ? toolBarH.value : 0}px)`,
+    barTrans: `translateY(-${!showBar.value ? toolBarH.value + headerH.value - TOOL_BAR_HEIGHT : 0}px)`,
+    contTrans: `translateY(-${!showBar.value ? toolBarH.value - TOOL_BAR_HEIGHT / 2 : 0}px)`,
     detailTrans: `translateY(${detailTrans}px)`,
   };
 });
