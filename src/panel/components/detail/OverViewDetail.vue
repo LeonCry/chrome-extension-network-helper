@@ -12,9 +12,9 @@ defineProps<{ detail: JSONDetail | null }>();
       <span>BASIC INFO</span>
     </h1>
     <article class="flex flex-col gap-1 px-4 py-2">
-      <div v-for="(value, key) in detail?.row" :key="key" class="flex items-center">
+      <div v-for="(value, key) in detail?.row" :key="key" class="flex items-start">
         <p class="w-64 font-bold shrink-0">
-          {{ key }}:
+          {{ key }}
         </p>
         <p class="flex-1 w-0 break-all">
           {{ value }}

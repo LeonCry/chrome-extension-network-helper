@@ -64,6 +64,7 @@ const transformY = computed(() => {
       class="flex items-center gap-2 bg-background py-4 px-4 z-10 border-b border-gray-300 relative"
     >
       <img src="/logo-Q-light.png" alt="logo" class="w-16 absolute">
+      <Eyes class="ml-20" />
       <span class="flex-1" />
       <RoundButton @click="handleShowBar">
         <IconArrowBigUpFilled
