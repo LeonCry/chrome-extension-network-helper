@@ -93,6 +93,11 @@ function onBeforeRequest(details: chrome.webRequest.OnBeforeRequestDetails) {
 }
 chrome.webRequest.onBeforeRequest.addListener(onBeforeRequest, { urls: ['<all_urls>'] },
 );
+// 请求中止
+chrome.webRequest.onErrorOccurred.addListener((details) => {
+  // console.log('请求被取消或失败:', details);
+  return void 0;
+}, { urls: ['<all_urls>'] });
 // 请求结束
 async function onCompletedRequest(request: chrome.devtools.network.Request) {
   // console.log('details', request);
@@ -218,16 +223,23 @@ function handleCustomField() {
 
 :deep(.v2table-class .el-table-v2__header) {
   background: transparent;
+  border-bottom: 1px solid var(--gray_300);
 }
 :deep(.v2table-class .el-table-v2__header-cell) {
   background: var(--btn_bg);
   border-right: 1px solid var(--gray_300);
+}
+:deep(.v2table-class .el-table-v2__row) {
   border-bottom: 1px solid var(--gray_300);
+  transition: 0s;
+}
+:deep(.v2table-class .el-table-v2__row:hover) {
+  background: var(--table_hover_bg);
 }
 :deep(.v2table-class .el-table-v2__row-cell) {
   background: var(--btn_bg);
   border: none;
-  border-bottom: 1px solid var(--gray_300);
+  transition: 0s;
 }
 :deep(.v2table-class .el-table-v2__row:hover .el-table-v2__row-cell) {
   background: var(--table_hover_bg);
@@ -237,5 +249,8 @@ function handleCustomField() {
 <style>
 .v2-error-row {
   color: var(--error_color) !important;
+}
+.v2-cache-row {
+  color: var(--color_green) !important;
 }
 </style>
