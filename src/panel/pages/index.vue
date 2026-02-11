@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { JSONDetail } from '../types/detail';
 import type { TableColumn } from '@/panel/components/content/table-columns';
 import { IconArrowBigUpFilled, IconSettingsFilled, IconSunHighFilled } from '@tabler/icons-vue';
 // 默认详情高度
@@ -16,10 +17,13 @@ function handleShowBar() {
   showBar.value = !showBar.value;
 }
 // 查看详情
-const detailRow = ref<string | null>(null);
+const detailRow = ref<JSONDetail | null>(null);
 function checkDetail(row: TableColumn) {
   row.getContent((content) => {
-    detailRow.value = content;
+    detailRow.value = {
+      row,
+      content: JSON.parse(content),
+    };
   });
 }
 const toolBarRef = useTemplateRef('toolBarRef');
@@ -86,10 +90,11 @@ const transformY = computed(() => {
       :cont-trans="transformY.contTrans"
     />
     <Detail
-      v-model:row="detailRow"
+      :detail="detailRow!"
       :height="detailH"
       :class="!detailRow ? '' : 'delay-200'"
       :style="{ transform: transformY.detailTrans }"
+      @close="() => detailRow = null"
     />
   </main>
 </template>

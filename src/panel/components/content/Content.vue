@@ -189,6 +189,7 @@ function handleCustomField() {
       :height="containerH"
       :columns="customColumns"
       :width="containerW"
+      :row-height="30"
       fixed
       :row-class="customRowClass"
       class="v2table-class"

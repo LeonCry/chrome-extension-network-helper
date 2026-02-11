@@ -1,17 +1,15 @@
 <script setup lang="ts">
-const menus = [
-  'Overview',
-  'Request body',
-  'Response body',
-  'Cookie',
-  'Storage',
-];
+const props = defineProps<{
+  menus: { title: string, component: any }[]
+  activeIndex: number
+}>();
+const emits = defineEmits<{ 'update:activeIndex': [number] }>();
+const activeIndex = useVModel(props, 'activeIndex', emits);
 const tabRefs = useTemplateRefsList<HTMLDivElement>();
 const sliderBounding = ref({
   left: 0,
   width: 0,
 });
-const activeIndex = ref(0);
 function tabChange(index: number) {
   activeIndex.value = index;
   const r = tabRefs.value[index];
@@ -35,7 +33,7 @@ onMounted(() => {
       :class="{ 'tab-child-active': index === activeIndex }"
       @click="tabChange(index)"
     >
-      {{ menu }}
+      {{ menu.title }}
     </div>
     <div
       class="tab-slider absolute top-0 left-0 h-7 mt-[7px]"
