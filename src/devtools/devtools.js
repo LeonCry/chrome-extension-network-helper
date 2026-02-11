@@ -1,5 +1,5 @@
 chrome.devtools.panels.create(
-  'API Helper',
+  'Network Helper',
   '',
   'src/panel/index.html',
 );
