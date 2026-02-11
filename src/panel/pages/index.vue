@@ -38,12 +38,12 @@ const detailH = ref(DEFAULT_DETAIL_HEIGHT);
 const assignH = computed(() => mainH.value - headerH.value);
 // content高度
 const contentH = computed(() => {
-  const bh = showBar.value ? toolBarH.value : 0;
+  const bh = showBar.value ? toolBarH.value : TOOL_BAR_HEIGHT / 2;
   const dh = detailRow.value ? detailH.value : 0;
   return assignH.value - bh - dh - GAP_HEIGHT * 2;
 });
 const transformY = computed(() => {
-  let detailTrans = 0;
+  let detailTrans = -10;
   if (!showBar.value) detailTrans -= toolBarH.value - TOOL_BAR_HEIGHT / 2;
   if (!detailRow.value) detailTrans += detailH.value;
   return {

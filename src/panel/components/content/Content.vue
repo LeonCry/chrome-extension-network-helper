@@ -215,7 +215,7 @@ function handleCustomField() {
     -4px -4px 8px var(--btn_shadow_l);
 }
 .v2table-class {
-  border-radius: 12px;
+  border-radius: 24px;
   font-size: 12px;
 }
 :deep(.v2table-class .el-table-v2__main) {

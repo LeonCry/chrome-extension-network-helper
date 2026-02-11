@@ -33,7 +33,11 @@ const activeIndex = ref(0);
       </RoundButton>
       <QuasiTab v-model:active-index="activeIndex" :menus="menus" />
       <article class="flex-1 overflow-hidden content">
-        <component :is="menus[activeIndex]!.component" :detail="detail" class="w-full h-full overflow-auto" />
+        <component
+          :is="menus[activeIndex]!.component"
+          :detail="detail"
+          class="w-full h-full overflow-y-auto overflow-x-hidden px-4 py-2"
+        />
       </article>
       <div />
     </div>
