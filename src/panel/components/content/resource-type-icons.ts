@@ -10,6 +10,7 @@ import {
   IconFileTypeJs,
   IconFileTypography,
   IconList,
+  IconLoader,
   IconPhoto,
 } from '@tabler/icons-vue';
 
@@ -28,6 +29,8 @@ const resourceTypeIcon: Record<string, Icon> = {
   wasm: IconCube,
 };
 
-export function getResourceTypeIcon(type: string) {
+export function getResourceTypeIcon(type: string | null | undefined, isPending = false) {
+  if (isPending) return IconLoader;
+  if (!type) return IconCircleDashedMinus;
   return resourceTypeIcon[type] || IconCircleDashedMinus;
 }

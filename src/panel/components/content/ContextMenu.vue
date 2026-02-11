@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import type { TableColumn } from './table-columns';
 import { IconCopyrightFilled, IconLocationFilled, IconLockFilled } from '@tabler/icons-vue';
 import { copy } from '@/panel/utils/copy';
 
 const props = defineProps<{
-  contextInfo?: { event: MouseEvent, row: ChromeRequest }
+  contextInfo?: { event: MouseEvent, row: TableColumn }
   close: () => void
 }>();
 const contextMenuRef = useTemplateRef<HTMLDivElement | null>('contextMenuRef');

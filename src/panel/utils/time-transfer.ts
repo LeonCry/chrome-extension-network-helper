@@ -1,4 +1,5 @@
-export function timeTransfer(cellValue: number) {
+export function timeTransfer(cellValue: number | string) {
+  if (typeof cellValue === 'string') return '/';
   if (cellValue < 1000) {
     return `${cellValue.toFixed(2)}ms`;
   }

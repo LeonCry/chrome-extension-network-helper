@@ -12,6 +12,7 @@
   "permissions": [
     "declarativeNetRequest",
     "declarativeNetRequestWithHostAccess",
+    "webRequest",
     "debugger"
   ],
   "host_permissions": [

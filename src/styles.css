@@ -26,6 +26,7 @@
   --gray_300: #d1d5dc;
   --text_slate: #62748e;
   --color_green: #009689;
+  --error_color: #e7000b;
 }
 .dark {
   --background: #09090b;

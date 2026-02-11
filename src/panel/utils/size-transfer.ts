@@ -1,4 +1,5 @@
-export function sizeTransfer(cellValue: number) {
+export function sizeTransfer(cellValue: number | string) {
+  if (typeof cellValue === 'string') return '/';
   if (cellValue < 1024) {
     return `${cellValue.toFixed(2)}B`;
   }

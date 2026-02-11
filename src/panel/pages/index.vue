@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { TableColumn } from '@/panel/components/content/table-columns';
 import { IconArrowBigUpFilled, IconSettingsFilled, IconSunHighFilled } from '@tabler/icons-vue';
 // 默认详情高度
 const DEFAULT_DETAIL_HEIGHT = 400;
@@ -16,7 +17,7 @@ function handleShowBar() {
 }
 // 查看详情
 const detailRow = ref<string | null>(null);
-function checkDetail(row: ChromeRequest) {
+function checkDetail(row: TableColumn) {
   row.getContent((content) => {
     detailRow.value = content;
   });

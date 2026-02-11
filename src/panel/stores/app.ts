@@ -5,7 +5,7 @@ export const useApp = defineStore(`${name}-APP`, () => {
   const isKeepLog = ref(false);
   const isStopCache = ref(false);
   const throttlingType = ref<keyof typeof NETWORK_PRESETS | null>(null);
-  const typeFilters = ref<string[]>([]);
+  const typeFilters = ref<(undefined | null | string)[]>([]);
   const statusFilters = ref<string[]>([]);
   const searchValue = ref('');
   const isSearchByKey = ref(true);

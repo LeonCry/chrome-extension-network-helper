@@ -41,7 +41,8 @@ const statusList = [
   { key: '3XX', value: '3' },
   { key: '4XX', value: '4' },
   { key: '5XX', value: '5' },
-  { key: 'PENDING', value: 'pending' },
+  { key: 'PENDING', value: 'P' },
+  { key: 'ERROR', value: 'E' },
 ];
 const throttlingLabel = computed(() => {
   return `THROTTLING (${Object.keys(NETWORK_PRESETS).find(t => t === throttlingType.value) || 'OFF'})`;
@@ -50,7 +51,7 @@ function handleThrottlingChange(value: string | null) {
   throttlingType.value = value;
   setNetworkThrottling(value);
 }
-function filterChange(t: Ref<string[]>, value: string) {
+function filterChange(t: Ref<(string | null | undefined)[]>, value: string) {
   if (t.value.includes(value)) {
     t.value = t.value.filter(s => s !== value);
   }
